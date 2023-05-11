@@ -17,6 +17,8 @@ endif
 SHELL = /usr/bin/env bash -o pipefail
 .SHELLFLAGS = -ec
 
+DOCKER_BINARY=docker
+
 .PHONY: all
 all: build
 
@@ -75,15 +77,15 @@ run: install ## Run a controller from your host.
 #docker-build: test ## Build docker image with the manager.
 .PHONY: docker-build-push
 docker-build-push: build ## Build docker image with the manager.
-	docker buildx build --platform linux/amd64,linux/arm64 -t ${IMG} --push .
+	$(DOCKER_BINARY) buildx build --platform linux/amd64 -t ${IMG} --push .
 
 #.PHONY: docker-build
 #docker-build: test ## Build docker image with the manager.
-#	docker build -t ${IMG} .
+#	$(DOCKER_BINARY) build -t ${IMG} .
 
 #.PHONY: docker-push
 #docker-push: ## Push docker image with the manager.
-#	docker push ${IMG}
+#	$(DOCKER_BINARY) push ${IMG}
 
 ##@ Deployment
 
@@ -112,7 +114,7 @@ endif
 ## Run acceptance tests then deploy into Docker Hub the controller as the Docker image provided in arg ${IMG}
 ## and update the local file "kubegres.yaml" with the image ${IMG}
 .PHONY: deploy
-deploy: deploy-check test docker-build-push kustomize ## Deploy controller to the K8s cluster specified in ~/.kube/config.
+deploy: deploy-check kustomize ## Deploy controller to the K8s cluster specified in ~/.kube/config.
 	cd config/manager && $(KUSTOMIZE) edit set image controller=${IMG}
 	$(KUSTOMIZE) build config/default > kubegres.yaml
 	@echo "DEPLOYED $(IMG) INTO DOCKER HUB. UPDATED 'kubegres.yaml' WITH '$(IMG)'. YOU CAN COMMIT 'kubegres.yaml' AND CREATE A RELEASE IN GITHUB."

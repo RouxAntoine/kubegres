@@ -187,7 +187,7 @@ data:
     backUpFilePath="$BACKUP_DESTINATION_FOLDER/$backUpFileName"
 
     echo "$dt - Starting DB backup of Kubegres resource $KUBEGRES_RESOURCE_NAME into file: $backUpFilePath";
-    echo "$dt - Running: pg_dumpall -h $BACKUP_SOURCE_DB_HOST_NAME -U postgres -c | gzip > $backUpFilePath"
+    echo "$dt - Running: pg_dumpall -h $BACKUP_SOURCE_DB_HOST_NAME -U $POSTGRES_USER -c | gzip > $backUpFilePath"
 
     pg_dumpall -h $BACKUP_SOURCE_DB_HOST_NAME -U postgres -c | gzip > $backUpFilePath
 
